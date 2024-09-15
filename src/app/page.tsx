@@ -1,11 +1,28 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 export default function Home() {
   const [notification, setNotification] = useState<string>("");
   const [notificationTimeout, setNotificationTimeout] =
     useState<NodeJS.Timeout>();
+
+  const [links, setLinks] = useState<
+    {
+      url: string;
+      name: string;
+      image: string;
+      imageCustomCSS?: CSSProperties;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    fetch("/links.json")
+      .then((res) => res.json())
+      .then((data) => {
+        setLinks(data);
+      });
+  }, []);
   return (
     <div className="flex flex-col justify-start items-center font-[family-name:var(--font-geist-sans)]">
       <header className="pt-8 mb-8 bg-gray-50 w-full flex flex-row justify-center items-end shadow-[inset_#0004_0_0_80px]">
@@ -13,34 +30,19 @@ export default function Home() {
       </header>
       <section className="flex flex-col items-center justify-start">
         <p className="text-xl border-b-2 border-primary mb-4">Links</p>
-        <a
-          className="flex flex-row justify-start items-center py-2 px-4 bg-primary text-white w-[240px] my-4 rounded-lg"
-          href="https://urlab.be"
-        >
-          <Image src="/invader.png" alt="logo" width={40} height={40} />
-          <p className="text-xl ml-4">Site du UrLab</p>
-        </a>
-        <a
-          className="flex flex-row justify-start items-center py-2 px-4 bg-primary text-white w-[240px] my-4 rounded-lg"
-          href="https://discord.gg/yJHFpSCYSc"
-        >
-          <Image
-            className=""
-            src="/discord.svg"
-            alt="logo"
-            width={40}
-            height={40}
-          />
-          <p className="text-xl ml-4">Discord du CI</p>
-        </a>
-        <a
-          className="flex flex-row justify-start items-center py-2 px-4 bg-primary text-white w-[240px] my-4 rounded-lg"
-          href="https://cercle-informatique.be"
-        >
-          <Image src="/ci.png" alt="logo" width={40} height={40} />
-          <p className="text-xl ml-4">Site du Cercle</p>
-        </a>
 
+        {links.map((link) => (
+          <a
+            key={link.url}
+            className="flex flex-row justify-start items-center py-3 px-4 bg-primary text-white w-[280px] my-4 rounded-lg"
+            href={link.url}
+          >
+            <Image 
+            style={link.imageCustomCSS}
+            src={link.image} alt="logo" width={40} height={40} />
+            <p className="text-xl ml-4">{link.name}</p>
+          </a>
+        ))}
         <p className="text-xl border-b-2 border-primary mb-4 mt-8">IRC</p>
         <div className="w-[250px]">
           <p>

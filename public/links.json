@@ -1,0 +1,28 @@
+[
+  {
+    "url": "https://urlab.be",
+    "name": "Site du UrLab",
+    "image": "/invader.png",
+    "imageCustomCSS": {}
+  },
+  {
+    "url": "https://discord.gg/yJHFpSCYSc",
+    "name": "Discord du CI",
+    "image": "/discord.svg",
+    "imageCustomCSS": {}
+  },
+  {
+    "url": "https://cercle-informatique.be",
+    "name": "Site du Cercle",
+    "image": "/ci.png",
+    "imageCustomCSS": {}
+  },
+  {
+    "url": "https://discord.gg/DpJENRkCjm",
+    "name": "Discord ULB Info",
+    "image": "/ulbinfo.gif",
+    "imageCustomCSS": {
+      "borderRadius": "50%"
+    }
+  }
+]
