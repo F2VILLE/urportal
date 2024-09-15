@@ -2,11 +2,12 @@
 import Image from "next/image";
 import { CSSProperties, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+
 export default function Home() {
   const [notification, setNotification] = useState<string>("");
   const [notificationTimeout, setNotificationTimeout] =
     useState<NodeJS.Timeout>();
-
+  const [hackerspaceOpen, setHackerspaceOpen] = useState<boolean>(false);
   const [links, setLinks] = useState<
     {
       url: string;
@@ -21,12 +22,45 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => {
         setLinks(data);
+
+        try {
+          fetch("/spaceapi.json")
+            .then((r) => r.json())
+            .then((data) => {
+              console.log("Data", data);
+              if (data.state?.open != undefined) {
+                setHackerspaceOpen(data.state.open);
+              }
+            })
+            .catch((e) => {
+              console.error(e);
+            });
+        } catch (error) {
+          console.error(error);
+        }
       });
   }, []);
   return (
     <div className="flex flex-col justify-start items-center font-[family-name:var(--font-geist-sans)]">
-      <header className="pt-8 mb-8 bg-gray-50 w-full flex flex-row justify-center items-end shadow-[inset_#0004_0_0_80px]">
-        <Image src="/logo.svg" alt="logo" width={200} height={200} />
+      <header className="pt-8 mb-8 relative bg-gray-50 w-full flex flex-row justify-center items-end shadow-[inset_#0004_0_0_80px]">
+        {!hackerspaceOpen && (
+          <Image src="/logo.svg" alt="logo" width={200} height={200} />
+        )}
+
+        {hackerspaceOpen && (
+          <>
+            <p className="absolute top-1 text-gray-500 left-0 right-0 mx-auto w-fit">
+              Le HackerSpace est ouvert !
+            </p>
+
+            <img
+              src="https://urlab.be/static/img/space-invaders-open.png"
+              alt="logo-open"
+              width={200}
+              height={200}
+            />
+          </>
+        )}
       </header>
       <section className="flex flex-col items-center justify-start">
         <p className="text-xl border-b-2 border-primary mb-4">Links</p>
@@ -36,13 +70,33 @@ export default function Home() {
             key={link.url}
             className="flex flex-row justify-start items-center py-3 px-4 bg-primary text-white w-[280px] my-4 rounded-lg"
             href={link.url}
+            target="_blank"
           >
-            <Image 
-            style={link.imageCustomCSS}
-            src={link.image} alt="logo" width={40} height={40} />
+            <Image
+              style={link.imageCustomCSS}
+              unoptimized={link.image.endsWith(".gif")}
+              src={link.image}
+              alt="logo"
+              width={40}
+              height={40}
+            />
             <p className="text-xl ml-4">{link.name}</p>
           </a>
         ))}
+        <p className="text-xl border-b-2 border-primary mb-4 mt-8">
+          Localisation
+        </p>
+        <p className="my-2">Le Hackerspace se trouve au local S.UB.126a</p>
+        <iframe
+          width="350"
+          height="350"
+          frameBorder={0}
+          scrolling="no"
+          marginHeight={0}
+          marginWidth={0}
+          src="https://www.openstreetmap.org/export/embed.html?bbox=4.3815574049949655%2C50.811014423688874%2C4.3844541907310495%2C50.812375356434686&amp;layer=mapnik&amp;marker=50.81169489501826%2C4.383005797863007"
+        ></iframe>
+
         <p className="text-xl border-b-2 border-primary mb-4 mt-8">IRC</p>
         <div className="w-[250px]">
           <p>
@@ -90,6 +144,7 @@ export default function Home() {
             </code>
           </pre>
         </div>
+        <hr className="my-4" />
       </section>
       <div className="pointer-events-none flex flex-row justify-center py-2 items-center bottom-0 left-0 right-0 absolute">
         <AnimatePresence>
